@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
-<link rel="shortcut icon" href="deltaF.ico"/>
+<link rel="shortcut icon" href="https://raw.githubusercontent.com/shany-mo/Nigreret/master/deltaF.ico"/>
 
 <style>
 h1 {font-family: "Montserrat", sans-serif; font-size: 9vh;}
@@ -40,7 +40,7 @@ input {font-family: "Courier New", sans-serif;}
 }
 
 .background-style{
-	background-image:url('newton.png');
+	background-image:url("https://raw.githubusercontent.com/shany-mo/Nigreret/master/newton.png");
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 	background-size:cover;
@@ -102,9 +102,7 @@ input {font-family: "Courier New", sans-serif;}
   function isMath(expr,i){
   	//TODO - e
   	var char = expr.substr(i,1);
-  	console.log("123",Number(char));
-    if(char == '(' || char == ')' || char == '^' || char == '*' || char == '/' || char == '+' || char == '-' || char == '.' || Number(char)!='NaN'){
-    	console.log(char+" math");
+    if(char == '(' || char == ')' || char == '^' || char == '*' || char == '/' || char == '+' || char == '-' || char == '.' || isNaN(char)==false){
     	return i+1;
     }
   	char = expr.substr(i,2);
@@ -189,6 +187,7 @@ input {font-family: "Courier New", sans-serif;}
   	variableArr.forEach(function(element){
   		element.var_value = document.getElementById("value"+element.var_name).value;
   		element.var_error = document.getElementById("error"+element.var_name).value;
+  		element.var_error_calc = "\\delta " + element.var_name;
     });
     variableArr.forEach(function(element){
     	console.log(element);
@@ -329,6 +328,7 @@ input {font-family: "Courier New", sans-serif;}
   		answer = new Variable(variable.var_name);
   		answer.var_value = variable.var_value;
   		answer.var_error = variable.var_error;
+  		answer.var_error_calc = variable.var_error_calc;
   	}
   	else if(Number(expr)!="NaN"){
   		answer = new Variable("constant");
@@ -415,7 +415,7 @@ input {font-family: "Courier New", sans-serif;}
   	var answer = new Variable(A+"\\cdot ("+x.var_name+")");
   	answer.var_value = Number(x.var_value)*Number(A);
   	answer.var_error = Number(x.var_error)*Number(A);
-  	answer.var_error_calc = "("+A+"\\cdot \\delta "+x.var_name+")";
+  	answer.var_error_calc = "("+A+"\\cdot "+x.var_error_calc+")";
   	return answer;
   }
 
@@ -424,7 +424,7 @@ input {font-family: "Courier New", sans-serif;}
   	var answer = new Variable(A+"+("+x.var_name+")");
   	answer.var_value = Number(x.var_value)+Number(A);
   	answer.var_error = Number(x.var_error);
-  	answer.var_error_calc = "(\\delta "+x.var_name+")";
+  	answer.var_error_calc = x.var_error_calc;
   	return answer;
   }
 
@@ -432,8 +432,8 @@ input {font-family: "Courier New", sans-serif;}
   	console.log("power "+x.var_value+"^"+n);
   	var answer = new Variable("("+x.var_name+")^"+n);
   	answer.var_value = Math.pow(x.var_value,n);
-  	answer.var_error = Math.pow(x.var_value,n)*n*(x.var_error/x.var_value);
-  	answer.var_error_calc = "("+x.var_name+"^"+n+"\\cdot "+n+"\\cdot \\delta "+x.var_name+"/"+x.var_name+")";
+  	answer.var_error = Math.pow(x.var_value,n)*Math.abs(n)*(x.var_error/x.var_value);
+  	answer.var_error_calc = "("+x.var_name+"^"+n+"\\cdot "+Math.abs(n)+"\\cdot \\delta "+x.var_name+"/"+x.var_name+")";
   	return answer;
   }
 
