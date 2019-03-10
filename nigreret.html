@@ -190,10 +190,10 @@ input {font-family: "Courier New", sans-serif;}
   		element.var_error_calc = "\\delta " + element.var_name;
     });
     variableArr.forEach(function(element){
+      console.log("GO elements");
     	console.log(element);
     });
     var expr = document.getElementById("expr").value;
-    console.log("calculates the expression: " + expr.substring(expr.indexOf('=')+1))
     var answer = calculate(variableArr,expr.substring(expr.indexOf('=')+1));
     var para1 = document.createElement("p");
     para1.appendChild(document.createTextNode("`"+expr.substring(0,expr.indexOf('='))+" = "+answer.var_value+"pm"+answer.var_error+"`"));
@@ -206,7 +206,7 @@ input {font-family: "Courier New", sans-serif;}
     input.type = "text";
     input.id = "forWord";
     input.style.width = "50%";
-    input.value = "\\delta "+expr.substring(0,expr.indexOf('='))+"="+answer.var_error_calc;
+    input.value = "\\delta "+expr.substring(0,expr.indexOf('='))+"="+answer.var_error_calc+"\\approx "+answer.var_error;
 	container.appendChild(input);
 	input.readOnly = true;
 	var button_copy = document.createElement("button");
@@ -220,6 +220,7 @@ input {font-family: "Courier New", sans-serif;}
   }
 
   function calculate(variableArr,expr){
+    console.log("Calculates the expression: " + expr);
   	var answer;
   	var char, act_index = -1;
   	var left, right;
@@ -239,11 +240,11 @@ input {font-family: "Courier New", sans-serif;}
   		}
   	}
   	if(act_index == -1){
-  		//single expression
+      console.log("Single expression...");
   		answer = findSingleExpression(variableArr,expr);
   	}
   	else{
-  		//split expression
+      console.log("Expression of 2 variables, splits the expression...");
   		left = calculate(variableArr,expr.substring(0,act_index));
   		right = calculate(variableArr,expr.substring(act_index+1));
   		console.log("main action is: " + expr.substr(act_index,1) + " ,left: " + expr.substring(0,act_index) + " ,right: " + expr.substring(act_index+1));
@@ -330,7 +331,8 @@ input {font-family: "Courier New", sans-serif;}
   		answer.var_error = variable.var_error;
   		answer.var_error_calc = variable.var_error_calc;
   	}
-  	else if(Number(expr)!="NaN"){
+  	else if(isNaN(expr)==false){
+      console.log("The expression " + expr + " is constant");
   		answer = new Variable("constant");
   		answer.var_value = expr;
   		answer.var_error = 0;
@@ -363,20 +365,21 @@ input {font-family: "Courier New", sans-serif;}
   		answer = exp(answer);
   	}
   	else if(expr.indexOf('^') != -1){
-  		if(Number(expr.substring(expr.indexOf('^')+1)) != "NaN"){
-			answer = calculate(variableArr,expr.substring(0,expr.indexOf('^')));
-			answer = power(answer,expr.substring(expr.indexOf('^')+1));
-		}
-		else{
-			alert("I'm sorry, I don't understand this expression: "+expr);
-			return null;
-		}
+
+  		if(isNaN(expr.substring(expr.indexOf('^')+1))==false){
+			   answer = calculate(variableArr,expr.substring(0,expr.indexOf('^')));
+			   answer = power(answer,expr.substring(expr.indexOf('^')+1));
+		  }
+		  else{
+			   alert("I'm sorry, I don't understand this expression: "+expr);
+			   return null;
+		  }
   	}
-  	else if(Number(expr.substr(0,1))!="NaN"){
+  	else if(isNaN(expr.substr(0,1))==false){
   		var i = 1;
-  		while(i<expr.length && (Number(expr.substr(i,1)) != "NaN" || expr.substr(i,1)=="."))
+  		while(i<expr.length && (isNaN(expr.substr(i,1))==false != "NaN" || expr.substr(i,1)=="."))
   			i++;
-  		if(Number(expr.substring(0,i)) != "NaN"){
+  		if(isNaN(expr.substring(0,i))==false){
   			answer = calculate(expr.substring(i));
   			answer = constant_mul(answer,expr.substring(0,i));
   		}
@@ -393,7 +396,7 @@ input {font-family: "Courier New", sans-serif;}
   }
 
   function cosine(x){
-  	console.log("cosine "+x.var_value);
+  	console.log("cosine "+x.var_name);
   	var answer = new Variable("cos("+x.var_name+")");
   	answer.var_value = Math.cos(Number(x.var_value));
   	answer.var_error = Math.max(Math.abs(Math.cos(Number(x.var_value) + Number(x.var_error)) - Math.cos(x.var_value)),Math.abs(Math.cos(Number(x.var_value) - Number(x.var_error)) - Math.cos(x.var_value)));
@@ -402,7 +405,7 @@ input {font-family: "Courier New", sans-serif;}
   }
 
   function sine(x){
-  	console.log("sine "+x.var_value);
+  	console.log("sine "+x.var_name);
   	var answer = new Variable("sin("+x.var_name+")");
   	answer.var_value = Math.sin(Number(x.var_value));
   	answer.var_error = Math.max(Math.abs(Math.sin(Number(x.var_value) + Number(x.var_error)) - Math.sin(x.var_value)),Math.abs(Math.sin(Number(x.var_value) - Number(x.var_error)) - Math.sin(x.var_value)));
@@ -411,7 +414,7 @@ input {font-family: "Courier New", sans-serif;}
   }
 
   function constant_mul(x, A) {
-  	console.log("constant "+x.var_value+"*"+A);
+  	console.log("constant "+x.var_name+"*"+A);
   	var answer = new Variable(A+"\\cdot ("+x.var_name+")");
   	answer.var_value = Number(x.var_value)*Number(A);
   	answer.var_error = Number(x.var_error)*Number(A);
@@ -420,8 +423,8 @@ input {font-family: "Courier New", sans-serif;}
   }
 
   function constant_add(x, A){
-  	console.log("constant "+x.var_value+"+"+A);
-  	var answer = new Variable(A+"+("+x.var_name+")");
+  	console.log("constant "+x.var_name+"+"+A);
+  	var answer = new Variable(A+"+"+x.var_name);
   	answer.var_value = Number(x.var_value)+Number(A);
   	answer.var_error = Number(x.var_error);
   	answer.var_error_calc = x.var_error_calc;
@@ -429,7 +432,7 @@ input {font-family: "Courier New", sans-serif;}
   }
 
   function power(x, n){
-  	console.log("power "+x.var_value+"^"+n);
+  	console.log("power "+x.var_name+"^"+n);
   	var answer = new Variable("("+x.var_name+")^"+n);
   	answer.var_value = Math.pow(x.var_value,n);
   	answer.var_error = Math.pow(x.var_value,n)*Math.abs(n)*(x.var_error/x.var_value);
@@ -438,7 +441,7 @@ input {font-family: "Courier New", sans-serif;}
   }
 
   function ln(x){
-  	console.log("ln "+x.var_value);
+  	console.log("ln "+x.var_name);
   	var answer = new Variable("ln("+x.var_name+")");
   	answer.var_value = Math.log(x.var_value);
   	answer.var_error = Number(x.var_error)/Number(x.var_value);
@@ -447,7 +450,7 @@ input {font-family: "Courier New", sans-serif;}
   }
 
   function exp(x){
-  	console.log("exp "+x.var_value);
+  	console.log("exp "+x.var_name);
   	var answer = new Variable("e^("+x.var_name+")");
   	answer.var_value = Math.exp(x.var_value);
   	answer.var_error = Math.exp(x.var_value)*Number(x.var_error);
@@ -456,8 +459,8 @@ input {font-family: "Courier New", sans-serif;}
   }
 
   function add(x, y){
-  	console.log("add "+x.var_value+" "+y.var_value);
-  	var answer = new Variable("("+x.var_name+"+"+y.var_name+")");
+  	console.log("add "+x.var_name+" "+y.var_name);
+  	var answer = new Variable(x.var_name+"+"+y.var_name);
   	answer.var_value = Number(x.var_value)+Number(y.var_value);
   	answer.var_error = Math.sqrt(Math.pow(x.var_error,2)+Math.pow(y.var_error,2));
   	answer.var_error_calc = "(\\sqrt((\\delta "+x.var_name+")^2+(\\delta "+y.var_name+")^2"+"))";
@@ -465,8 +468,8 @@ input {font-family: "Courier New", sans-serif;}
   }
 
   function sub(x, y){
-  	console.log("sub "+x.var_value+" "+y.var_value);
-  	var answer = new Variable("("+x.var_name+"-"+y.var_name+")");
+  	console.log("sub "+x.var_name+" "+y.var_name);
+  	var answer = new Variable(x.var_name+"-"+y.var_name);
   	answer.var_value = Number(x.var_value)-Number(y.var_value);
   	answer.var_error = Math.sqrt(Math.pow(x.var_error,2)+Math.pow(y.var_error,2));
   	answer.var_error_calc = "(\\sqrt((\\delta "+x.var_name+")^2+(\\delta "+y.var_name+")^2"+"))";
@@ -474,8 +477,8 @@ input {font-family: "Courier New", sans-serif;}
   }
 
   function mul(x, y){
-  	console.log("mul "+x.var_value+" "+y.var_value);
-  	var answer = new Variable("("+x.var_name+"\\cdot "+y.var_name+")");
+  	console.log("mul "+x.var_name+" "+y.var_name);
+  	var answer = new Variable(x.var_name+"\\cdot "+y.var_name);
   	answer.var_value = Number(x.var_value)*Number(y.var_value);
   	answer.var_error =  (Number(x.var_value)*Number(y.var_value))*Math.sqrt(Math.pow((Number(x.var_error)/Number(x.var_value)),2)+Math.pow((Number(y.var_error)/Number(y.var_value)),2));
   	answer.var_error_calc = "("+x.var_name+"\\cdot "+y.var_name+"\\cdot \\sqrt((\\delta "+x.var_name+"/"+x.var_name+")^2+(\\delta "+y.var_name+"/"+y.var_name+")^2)"+")"
@@ -483,8 +486,8 @@ input {font-family: "Courier New", sans-serif;}
   }
 
   function div(x, y){
-  	console.log("div "+x.var_value+" "+y.var_value);
-  	var answer = new Variable("("+x.var_name+"\\/"+y.var_name+")");
+  	console.log("div "+x.var_name+" "+y.var_name);
+  	var answer = new Variable(x.var_name+"\\/"+y.var_name);
   	answer.var_value = Number(x.var_value)/Number(y.var_value);
   	answer.var_error = (Number(x.var_value)/Number(y.var_value))*Math.sqrt(Math.pow((Number(x.var_error)/Number(x.var_value)),2)+Math.pow((Number(y.var_error)/Number(y.var_value)),2));
   	answer.var_error_calc = "("+x.var_name+"/"+y.var_name+"\\cdot \\sqrt((\\delta "+x.var_name+"/"+x.var_name+")^2+(\\delta "+y.var_name+"/"+y.var_name+")^2)"+")";
