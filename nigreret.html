@@ -10,19 +10,16 @@
 h1 {font-family: "Montserrat", sans-serif; font-size: 9vh;}
 body,button {font-family: "Raleway", sans-serif}
 input {font-family: "Courier New", sans-serif;}
-
 .main-input{
-	width: 60%;
-	height: 10%;
+  width: 60%;
+  height: 10%;
 }
-
 .sticky{
-	position: fixed;
-	top: 0;
-	width: 100%;
-	height: 35%;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 35%;
 }
-
 .header {
   overflow: hidden;
   height: 17%;
@@ -34,28 +31,24 @@ input {font-family: "Courier New", sans-serif;}
   z-index: 1;
   text-align: center;
 }
-
 .main-body{
-	margin-top: 13%;
+  margin-top: 13%;
 }
-
 .background-style{
-	background-image:url("https://raw.githubusercontent.com/shany-mo/Nigreret/master/newton.png");
-	background-repeat: no-repeat;
-	background-attachment: fixed;
-	background-size:cover;
-	background-position: bottom left;
-	text-align:center;
-	font-size: 17px;
+  background-image:url("https://raw.githubusercontent.com/shany-mo/Nigreret/master/newton.png");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size:cover;
+  background-position: bottom left;
+  text-align:center;
+  font-size: 17px;
 }
-
 .container-style{
-	width: 100%;
+  width: 100%;
 }
-
 </style>
 <div class="header">
-	<h1>ERROR PROPAGATION</h1>
+  <h1>ERROR PROPAGATION</h1>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=AM_CHTML"></script>
@@ -63,135 +56,126 @@ input {font-family: "Courier New", sans-serif;}
 
 <body class="background-style">
 <div class="main-body">
-	<p>Calculate the error of...<br></p>
-	<input class="main-input" type="text" id="expr" value="x=v*t" oninput="calculateExpr()" onClick="this.select();">
-	<p>This is what I get:<br></p>
-	<p id="prettyExpr">`x=v*t`</p>
-	<p id="variable">`deltax` will be calculated<br></p>
+  <p>Calculate the error of...<br></p>
+  <input class="main-input" type="text" id="expr" value="x=v*t" oninput="calculateExpr()" onClick="this.select();">
+  <p>This is what I get:<br></p>
+  <p id="prettyExpr">`x=v*t`</p>
+  <p id="variable">`deltax` will be calculated<br></p>
 
-	<button class="w3-button w3-black w3-padding-large w3-large w3-margin-top w3-animate-opacity" onclick="findVars()">Done</button>
+  <button class="w3-button w3-black w3-padding-large w3-large w3-margin-top w3-animate-opacity" onclick="findVars()">Done</button>
 
-	<div id="container" class="container-style"></div>
-	<div style="height: 30px"></div>
+  <div id="container" class="container-style"></div>
+  <div style="height: 30px"></div>
 </div>
 
 <script type="text/javascript">
-
   function Variable(var_name){
-  	this.var_name = var_name;
-  	this.var_value = 0;
-  	this.var_error = 0;
-  	this.var_error_calc = "";
+    this.var_name = var_name;
+    this.var_value = 0;
+    this.var_error = 0;
+    this.var_error_calc = "";
   }
-
   function calculateExpr(){
-  	var container = document.getElementById("container");
+    var container = document.getElementById("container");
     while(container.hasChildNodes()){
-    	container.removeChild(container.lastChild);
+      container.removeChild(container.lastChild);
     }
     document.getElementById("variable").innerHTML=''
     var expr = document.getElementById("expr").value;
     document.getElementById("prettyExpr").innerHTML = '`' + expr + '`';
     if(expr.indexOf('=') != -1){
-    	document.getElementById("variable").innerHTML="`delta" + expr.substring(0,expr.indexOf('=')) + "` will be calculated"
+      document.getElementById("variable").innerHTML="`delta" + expr.substring(0,expr.indexOf('=')) + "` will be calculated"
     }
-
     MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
   }
-
   function isMath(expr,i){
-  	//TODO - e
-  	var char = expr.substr(i,1);
+    //TODO - e
+    var char = expr.substr(i,1);
     if(char == '(' || char == ')' || char == '^' || char == '*' || char == '/' || char == '+' || char == '-' || char == '.' || isNaN(char)==false){
-    	return i+1;
+      return i+1;
     }
-  	char = expr.substr(i,2);
-  	if(char == "pi" || char == "e^")
-  		return i+2;
-  	char = expr.substr(i,3);
-  	if(char == "cos" || char == "sin")
-  		return i+3;
-  	char = expr.substr(i,4);
-  	if(char == "sqrt")
-  		return i+4;
+    char = expr.substr(i,2);
+    if(char == "pi" || char == "e^")
+      return i+2;
+    char = expr.substr(i,3);
+    if(char == "cos" || char == "sin")
+      return i+3;
+    char = expr.substr(i,4);
+    if(char == "sqrt")
+      return i+4;
     return i;
   }
-
   function findVars(){
-  	var expr = document.getElementById("expr").value;
-  	var i = expr.indexOf('=')+1;
-  	var start = i;
-  	var variableArr = [];
-  	while(i<expr.length){
-  		if(i != isMath(expr,i)){
-  			if(start != i && isVarExists(variableArr, expr.substring(start,i))==null){
-  				variableArr.push(new Variable(expr.substring(start,i)));
-  			}
-  			i = isMath(expr,i);
-  			start=i;
-  		}
-  		else{
-  			i++;
-  		}
+    var expr = document.getElementById("expr").value;
+    var i = expr.indexOf('=')+1;
+    var start = i;
+    var variableArr = [];
+    while(i<expr.length){
+      if(i != isMath(expr,i)){
+        if(start != i && isVarExists(variableArr, expr.substring(start,i))==null){
+          variableArr.push(new Variable(expr.substring(start,i)));
+        }
+        i = isMath(expr,i);
+        start=i;
+      }
+      else{
+        i++;
+      }
     }
     if(start != i && isVarExists(variableArr, expr.substring(start,i))==null){
-    	variableArr.push(new Variable(expr.substring(start,i)));
+      variableArr.push(new Variable(expr.substring(start,i)));
     }
     variableArr.forEach(function(element){
-    	console.log(element);
+      console.log(element);
     });
     getValueAndErr(variableArr);
   }
-
   function isVarExists(variableArr, expr){
-  	answer = null;
-  	variableArr.forEach(function(element){
-    	if(element.var_name == expr){
-    		answer = element;
-    	}
+    answer = null;
+    variableArr.forEach(function(element){
+      if(element.var_name == expr){
+        answer = element;
+      }
     });
     return answer;
   }
-
   function getValueAndErr(variableArr){
-  	var container = document.getElementById("container");
+    var container = document.getElementById("container");
     while(container.hasChildNodes()){
-    	container.removeChild(container.lastChild);
+      container.removeChild(container.lastChild);
     }
-  	variableArr.forEach(function(element){
-  		var para = document.createElement("p");
-    	para.appendChild(document.createTextNode("`" + element.var_name +"` = "));
-    	var input1 = document.createElement("input");
-    	input1.type = "text";
-    	input1.id = "value" + element.var_name;
-		para.appendChild(input1);
-    	para.appendChild(document.createTextNode("`pm`"));
-    	var input2 = document.createElement("input");
-    	input2.type = "text";
-    	input2.id = "error" + element.var_name;
-    	para.appendChild(input2);
-
-    	container.appendChild(para);
+    variableArr.forEach(function(element){
+      var para = document.createElement("p");
+      para.appendChild(document.createTextNode("`" + element.var_name +"` = "));
+      var input1 = document.createElement("input");
+      input1.type = "text";
+      input1.id = "value" + element.var_name;
+    para.appendChild(input1);
+      para.appendChild(document.createTextNode("`pm`"));
+      var input2 = document.createElement("input");
+      input2.type = "text";
+      input2.id = "error" + element.var_name;
+      para.appendChild(input2);
+      container.appendChild(para);
     });
     MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
     var button_GO = document.createElement("button");
     button_GO.innerHTML = "GO!";
     button_GO.addEventListener ("click", function(){
-    	GO(variableArr);
+      GO(variableArr);
     });
     button_GO.className = "w3-button w3-black w3-padding-large w3-large w3-margin-top w3-animate-opacity";
     container.appendChild(button_GO);
   }
-
   function GO(variableArr){
-  	variableArr.forEach(function(element){
-  		element.var_value = document.getElementById("value"+element.var_name).value;
-  		element.var_error = document.getElementById("error"+element.var_name).value;
-  		element.var_error_calc = "\\delta " + element.var_name;
+    variableArr.forEach(function(element){
+      element.var_value = document.getElementById("value"+element.var_name).value;
+      element.var_error = document.getElementById("error"+element.var_name).value;
+      element.var_error_calc = "\\delta " + element.var_name;
     });
     variableArr.forEach(function(element){
       console.log("GO elements");
-    	console.log(element);
+      console.log(element);
     });
     var expr = document.getElementById("expr").value;
     var answer = calculate(variableArr,expr.substring(expr.indexOf('=')+1));
@@ -199,7 +183,6 @@ input {font-family: "Courier New", sans-serif;}
     para1.appendChild(document.createTextNode("`"+expr.substring(0,expr.indexOf('='))+" = "+answer.var_value+"pm"+answer.var_error+"`"));
     container.appendChild(para1);
     MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-
     var para2 = document.createElement("p");
     para2.appendChild(document.createTextNode("\\delta "+expr.substring(0,expr.indexOf('='))+"="+answer.var_name));
     var input = document.createElement("input");
@@ -207,291 +190,283 @@ input {font-family: "Courier New", sans-serif;}
     input.id = "forWord";
     input.style.width = "50%";
     input.value = "\\delta "+expr.substring(0,expr.indexOf('='))+"="+answer.var_error_calc+"\\approx "+answer.var_error;
-	container.appendChild(input);
-	input.readOnly = true;
-	var button_copy = document.createElement("button");
+  container.appendChild(input);
+  input.readOnly = true;
+  var button_copy = document.createElement("button");
     button_copy.innerHTML = "copy";
     button_copy.addEventListener ("click", function(){
-    	var copyText = document.getElementById("forWord");
-    	copyText.select();
-    	document.execCommand("copy");
+      var copyText = document.getElementById("forWord");
+      copyText.select();
+      document.execCommand("copy");
     });
     container.appendChild(button_copy);
   }
-
   function calculate(variableArr,expr){
     console.log("Calculates the expression: " + expr);
-  	var answer;
-  	var char, act_index = -1;
-  	var left, right;
-  	//after this loop act_index should point at the main action or -1 if it is a single expression
-  	for(let i=0; i<expr.length; i++){
-  		char = expr.substr(i,1);
-  		if(char == '('){
-  			while(i<expr.length && expr.substr(i,1) != ')')
-  				i++;
-  			continue;
-  		}
-  		if(char == '*' || char == '/' || char == '+' || char == '-'){
-  			if(act_index == -1)
-  				act_index = i;
-  			else if((char == '+' || char == '-') && (expr.substr(act_index,1) == '*' || expr.substr(act_index,1) == '/'))
-  				act_index = i;
-  		}
-  	}
-  	if(act_index == -1){
+    var answer;
+    var char, act_index = -1;
+    var left, right;
+    //after this loop act_index should point at the main action or -1 if it is a single expression
+    for(let i=0; i<expr.length; i++){
+      char = expr.substr(i,1);
+      if(char == '('){
+        while(i<expr.length && expr.substr(i,1) != ')')
+          i++;
+        continue;
+      }
+      if(char == '*' || char == '/' || char == '+' || char == '-'){
+        if(act_index == -1)
+          act_index = i;
+        else if((char == '+' || char == '-') && (expr.substr(act_index,1) == '*' || expr.substr(act_index,1) == '/'))
+          act_index = i;
+      }
+    }
+    if(act_index == -1){
       console.log("Single expression...");
-  		answer = findSingleExpression(variableArr,expr);
-  	}
-  	else{
+      answer = findSingleExpression(variableArr,expr);
+    }
+    else{
       console.log("Expression of 2 variables, splits the expression...");
-  		left = calculate(variableArr,expr.substring(0,act_index));
-  		right = calculate(variableArr,expr.substring(act_index+1));
-  		console.log("main action is: " + expr.substr(act_index,1) + " ,left: " + expr.substring(0,act_index) + " ,right: " + expr.substring(act_index+1));
-  		switch(expr.substr(act_index,1)){
-  			case "+":
-  				if(left.var_name == "constant" && right.var_name != "constant"){
-  					answer = constant_add(right,left.var_value);
-  				}
-  				else if(left.var_name != "constant" && right.var_name == "constant"){
-  					answer = constant_add(left,right.var_value);
-  				}
-  				else if(left.var_name == "constant" && right.var_name == "constant"){
-  					answer = new Variable("constant");
-  					answer.var_value = Number(left.var_value) + Number(right.var_value);
-  					answer.var_error = 0;
-  				}
-  				else{
-  					answer = add(left,right);
-  				}
-  				break;
-  			case "-":
-  				if(left.var_name == "constant" && right.var_name != "constant"){
-  					right.var_value = "-"+right.var_value;
-  					answer = constant_add(right,left.var_value);
-  				}
-  				else if(left.var_name != "constant" && right.var_name == "constant"){
-  					right.var_value = "-"+right.var_value;
-  					answer = constant_add(left,right.var_value);
-  				}
-  				else if(left.var_name == "constant" && right.var_name == "constant"){
-  					answer = new Variable("constant");
-  					answer.var_value = Number(left.var_value) - Number(right.var_value);
-  					answer.var_error = 0;
-  				}
-  				else{
-  					answer = sub(left,right);
-  				}
-  				break;
-  			case "*":
-  				if(left.var_name == "constant" && right.var_name != "constant"){
-  					answer = constant_mul(right,left.var_value);
-  				}
-  				else if(left.var_name != "constant" && right.var_name == "constant"){
-  					answer = constant_mul(left,right.var_value);
-  				}
-  				else if(left.var_name == "constant" && right.var_name == "constant"){
-  					answer = new Variable("constant");
-  					answer.var_value = Number(left.var_value) * Number(right.var_value);
-  					answer.var_error = 0;
-  				}
-  				else{
-  					answer = mul(left,right);
-  				}
-  				break;
-  			case "/":
-  				if(left.var_name == "constant" && right.var_name != "constant"){
-  					answer = power(right,-1);
-  					answer = constant_mul(answer,left.var_value);
-  				}
-  				else if(left.var_name != "constant" && right.var_name == "constant"){
-  					answer = constant_mul(left,1/right.var_value);
-  				}
-  				else if(left.var_name == "constant" && right.var_name == "constant"){
-  					answer = new Variable("constant");
-  					answer.var_value = Number(left.var_value) / Number(right.var_value);
-  					answer.var_error = 0;
-  				}
-  				else{
-  					answer = div(left,right);
-  				}
-  		}
-  	}
-  	console.log(answer);
-  	return answer;
+      left = calculate(variableArr,expr.substring(0,act_index));
+      right = calculate(variableArr,expr.substring(act_index+1));
+      console.log("main action is: " + expr.substr(act_index,1) + " ,left: " + expr.substring(0,act_index) + " ,right: " + expr.substring(act_index+1));
+      switch(expr.substr(act_index,1)){
+        case "+":
+          if(left.var_name == "constant" && right.var_name != "constant"){
+            answer = constant_add(right,left.var_value);
+          }
+          else if(left.var_name != "constant" && right.var_name == "constant"){
+            answer = constant_add(left,right.var_value);
+          }
+          else if(left.var_name == "constant" && right.var_name == "constant"){
+            answer = new Variable("constant");
+            answer.var_value = Number(left.var_value) + Number(right.var_value);
+            answer.var_error = 0;
+          }
+          else{
+            answer = add(left,right);
+          }
+          break;
+        case "-":
+          if(left.var_name == "constant" && right.var_name != "constant"){
+            right.var_value = "-"+right.var_value;
+            answer = constant_add(right,left.var_value);
+          }
+          else if(left.var_name != "constant" && right.var_name == "constant"){
+            right.var_value = "-"+right.var_value;
+            answer = constant_add(left,right.var_value);
+          }
+          else if(left.var_name == "constant" && right.var_name == "constant"){
+            answer = new Variable("constant");
+            answer.var_value = Number(left.var_value) - Number(right.var_value);
+            answer.var_error = 0;
+          }
+          else{
+            answer = sub(left,right);
+          }
+          break;
+        case "*":
+          if(left.var_name == "constant" && right.var_name != "constant"){
+            answer = constant_mul(right,left.var_value);
+          }
+          else if(left.var_name != "constant" && right.var_name == "constant"){
+            answer = constant_mul(left,right.var_value);
+          }
+          else if(left.var_name == "constant" && right.var_name == "constant"){
+            answer = new Variable("constant");
+            answer.var_value = Number(left.var_value) * Number(right.var_value);
+            answer.var_error = 0;
+          }
+          else{
+            answer = mul(left,right);
+          }
+          break;
+        case "/":
+          if(left.var_name == "constant" && right.var_name != "constant"){
+            answer = power(right,-1);
+            answer = constant_mul(answer,left.var_value);
+          }
+          else if(left.var_name != "constant" && right.var_name == "constant"){
+            answer = constant_mul(left,1/right.var_value);
+          }
+          else if(left.var_name == "constant" && right.var_name == "constant"){
+            answer = new Variable("constant");
+            answer.var_value = Number(left.var_value) / Number(right.var_value);
+            answer.var_error = 0;
+          }
+          else{
+            answer = div(left,right);
+          }
+      }
+    }
+    console.log(answer);
+    return answer;
   }
-
   function findSingleExpression(variableArr, expr){
-  	//TODO
-  	var answer;
-  	var variable = isVarExists(variableArr,expr);
-  	if(variable != null){
-  		answer = new Variable(variable.var_name);
-  		answer.var_value = variable.var_value;
-  		answer.var_error = variable.var_error;
-  		answer.var_error_calc = variable.var_error_calc;
-  	}
-  	else if(isNaN(expr)==false){
+    //TODO
+    var answer;
+    var variable = isVarExists(variableArr,expr);
+    if(variable != null){
+      answer = new Variable(variable.var_name);
+      answer.var_value = variable.var_value;
+      answer.var_error = variable.var_error;
+      answer.var_error_calc = variable.var_error_calc;
+    }
+    else if(isNaN(expr)==false){
       console.log("The expression " + expr + " is constant");
-  		answer = new Variable("constant");
-  		answer.var_value = expr;
-  		answer.var_error = 0;
-  	}
-  	else if(expr.substr(0,1) == '('){
-  		if(expr.substr(expr.length-1,1) == ')')
-  			answer = calculate(variableArr,expr.substring(1,expr.length-1));
-  		else
-  			answer = calculate(variableArr,expr.substring(1));
-  		//answer.var_name = "(" + answer.var_name + ")"; TODO
-  	}
-  	else if(expr.substr(0,3) == "cos"){
-  		answer = calculate(variableArr,expr.substring(3));
-  		answer = cosine(answer);
-  	}
-  	else if(expr.substr(0,3) == "sin"){
-  		answer = calculate(variableArr,expr.substring(3));
-  		answer = sine(answer);
-  	}
-  	else if(expr.substr(0,4) == "sqrt"){
-  		answer = calculate(variableArr,expr.substring(4));
-  		answer = power(answer,0.5);
-  	}
-  	else if(expr.substr(0,2) == "ln"){
-  		answer = calculate(variableArr,expr.substring(2));
-  		answer = ln(answer);
-  	}
-  	else if(expr.substr(0,2) == "e^"){
-  		answer = calculate(variableArr,expr.substring(2));
-  		answer = exp(answer);
-  	}
-  	else if(expr.indexOf('^') != -1){
-
-  		if(isNaN(expr.substring(expr.indexOf('^')+1))==false){
-			   answer = calculate(variableArr,expr.substring(0,expr.indexOf('^')));
-			   answer = power(answer,expr.substring(expr.indexOf('^')+1));
-		  }
-		  else{
-			   alert("I'm sorry, I don't understand this expression: "+expr);
-			   return null;
-		  }
-  	}
-  	else if(isNaN(expr.substr(0,1))==false){
-  		var i = 1;
-  		while(i<expr.length && (isNaN(expr.substr(i,1))==false != "NaN" || expr.substr(i,1)=="."))
-  			i++;
-  		if(isNaN(expr.substring(0,i))==false){
-  			answer = calculate(expr.substring(i));
-  			answer = constant_mul(answer,expr.substring(0,i));
-  		}
-  		else{
-  			alert("I'm sorry, I don't understand this expression: "+expr);
-  			return null;
-  		}
-  	}
-  	else{
-  		alert("I'm sorry, I don't understand this expression: "+expr);
-  		return null;
-  	}
-  	return answer;
+      answer = new Variable("constant");
+      answer.var_value = expr;
+      answer.var_error = 0;
+    }
+    else if(expr.substr(0,1) == '('){
+      if(expr.substr(expr.length-1,1) == ')')
+        answer = calculate(variableArr,expr.substring(1,expr.length-1));
+      else
+        answer = calculate(variableArr,expr.substring(1));
+      //answer.var_name = "(" + answer.var_name + ")"; TODO
+    }
+    else if(expr.substr(0,3) == "cos"){
+      answer = calculate(variableArr,expr.substring(3));
+      answer = cosine(answer);
+    }
+    else if(expr.substr(0,3) == "sin"){
+      answer = calculate(variableArr,expr.substring(3));
+      answer = sine(answer);
+    }
+    else if(expr.substr(0,4) == "sqrt"){
+      answer = calculate(variableArr,expr.substring(4));
+      answer = power(answer,0.5);
+    }
+    else if(expr.substr(0,2) == "ln"){
+      answer = calculate(variableArr,expr.substring(2));
+      answer = ln(answer);
+    }
+    else if(expr.substr(0,2) == "e^"){
+      answer = calculate(variableArr,expr.substring(2));
+      answer = exp(answer);
+    }
+    else if(expr.indexOf('^') != -1){
+      if(isNaN(expr.substring(expr.indexOf('^')+1))==false){
+         answer = calculate(variableArr,expr.substring(0,expr.indexOf('^')));
+         answer = power(answer,expr.substring(expr.indexOf('^')+1));
+      }
+      else{
+         alert("I'm sorry, I don't understand this expression: "+expr);
+         return null;
+      }
+    }
+    else if(isNaN(expr.substr(0,1))==false){
+      var i = 1;
+      while(i<expr.length && (isNaN(expr.substr(i,1))==false != "NaN" || expr.substr(i,1)=="."))
+        i++;
+      if(isNaN(expr.substring(0,i))==false){
+        answer = calculate(expr.substring(i));
+        answer = constant_mul(answer,expr.substring(0,i));
+      }
+      else{
+        alert("I'm sorry, I don't understand this expression: "+expr);
+        return null;
+      }
+    }
+    else{
+      alert("I'm sorry, I don't understand this expression: "+expr);
+      return null;
+    }
+    return answer;
   }
-
   function cosine(x){
-  	console.log("cosine "+x.var_name);
-  	var answer = new Variable("cos("+x.var_name+")");
-  	answer.var_value = Math.cos(Number(x.var_value));
-  	answer.var_error = Math.max(Math.abs(Math.cos(Number(x.var_value) + Number(x.var_error)) - Math.cos(x.var_value)),Math.abs(Math.cos(Number(x.var_value) - Number(x.var_error)) - Math.cos(x.var_value)));
-  	answer.var_error_calc = "|cos("+x.var_name+"\\pm \\delta "+x.var_name+")-cos("+x.var_name+")|";
-  	return answer;
+    console.log("cosine "+x.var_name);
+    var answer = new Variable("cos("+x.var_name+")");
+    answer.var_value = Math.cos(Number(x.var_value));
+    answer.var_error = Math.max(Math.abs(Math.cos(Number(x.var_value) + Number(x.var_error)) - Math.cos(x.var_value)),Math.abs(Math.cos(Number(x.var_value) - Number(x.var_error)) - Math.cos(x.var_value)));
+    answer.var_error_calc = "|cos("+x.var_name+"\\pm \\delta "+complex_expr(x.var_name)+")-cos("+x.var_name+")|";
+    return answer;
   }
-
   function sine(x){
-  	console.log("sine "+x.var_name);
-  	var answer = new Variable("sin("+x.var_name+")");
-  	answer.var_value = Math.sin(Number(x.var_value));
-  	answer.var_error = Math.max(Math.abs(Math.sin(Number(x.var_value) + Number(x.var_error)) - Math.sin(x.var_value)),Math.abs(Math.sin(Number(x.var_value) - Number(x.var_error)) - Math.sin(x.var_value)));
-  	answer.var_error_calc = "|sin("+x.var_name+"\\pm \\delta "+x.var_name+")-sin("+x.var_name+")|";
-  	return answer;
+    console.log("sine "+x.var_name);
+    var answer = new Variable("sin("+x.var_name+")");
+    answer.var_value = Math.sin(Number(x.var_value));
+    answer.var_error = Math.max(Math.abs(Math.sin(Number(x.var_value) + Number(x.var_error)) - Math.sin(x.var_value)),Math.abs(Math.sin(Number(x.var_value) - Number(x.var_error)) - Math.sin(x.var_value)));
+    answer.var_error_calc = "|sin("+x.var_name+"\\pm \\delta "+complex_expr(x.var_name)+")-sin("+x.var_name+")|";
+    return answer;
   }
-
   function constant_mul(x, A) {
-  	console.log("constant "+x.var_name+"*"+A);
-  	var answer = new Variable(A+"\\cdot ("+x.var_name+")");
-  	answer.var_value = Number(x.var_value)*Number(A);
-  	answer.var_error = Number(x.var_error)*Number(A);
-  	answer.var_error_calc = "("+A+"\\cdot "+x.var_error_calc+")";
-  	return answer;
+    console.log("constant ("+x.var_name+")*"+A);
+    var answer = new Variable(A+"\\cdot "+complex_expr(x.var_name));
+    answer.var_value = Number(x.var_value)*Number(A);
+    answer.var_error = Number(x.var_error)*Number(A);
+    answer.var_error_calc = A+"\\cdot "+complex_expr(x.var_error_calc);
+    return answer;
   }
-
   function constant_add(x, A){
-  	console.log("constant "+x.var_name+"+"+A);
-  	var answer = new Variable(A+"+"+x.var_name);
-  	answer.var_value = Number(x.var_value)+Number(A);
-  	answer.var_error = Number(x.var_error);
-  	answer.var_error_calc = x.var_error_calc;
-  	return answer;
+    console.log("constant "+x.var_name+"+"+A);
+    var answer = new Variable(A+"+"+complex_expr(x.var_name));
+    answer.var_value = Number(x.var_value)+Number(A);
+    answer.var_error = Number(x.var_error);
+    answer.var_error_calc = x.var_error_calc;
+    return answer;
   }
-
   function power(x, n){
-  	console.log("power "+x.var_name+"^"+n);
-  	var answer = new Variable("("+x.var_name+")^"+n);
-  	answer.var_value = Math.pow(x.var_value,n);
-  	answer.var_error = Math.pow(x.var_value,n)*Math.abs(n)*(x.var_error/x.var_value);
-  	answer.var_error_calc = "("+x.var_name+"^"+n+"\\cdot "+Math.abs(n)+"\\cdot \\delta "+x.var_name+"/"+x.var_name+")";
-  	return answer;
+    console.log("power ("+x.var_name+")^"+n);
+    var answer = new Variable(complex_expr(x.var_name)+"^"+n);
+    answer.var_value = Math.pow(x.var_value,n);
+    answer.var_error = Math.pow(x.var_value,n)*Math.abs(n)*(x.var_error/x.var_value);
+    answer.var_error_calc = complex_expr(x.var_name)+"^"+n+" \\cdot "+Math.abs(n)+"\\cdot \\delta "+complex_expr(x.var_name)+"/"+complex_expr(x.var_name);
+    return answer;
   }
-
   function ln(x){
-  	console.log("ln "+x.var_name);
-  	var answer = new Variable("ln("+x.var_name+")");
-  	answer.var_value = Math.log(x.var_value);
-  	answer.var_error = Number(x.var_error)/Number(x.var_value);
-  	answer.var_error_calc = "(\\delta "+x.var_name+"/"+x.var_name+")";
-  	return answer;
+    console.log("ln "+x.var_name);
+    var answer = new Variable("ln("+x.var_name+")");
+    answer.var_value = Math.log(x.var_value);
+    answer.var_error = Number(x.var_error)/Number(x.var_value);
+    answer.var_error_calc = "\\delta "+complex_expr(x.var_name)+"/"+complex_expr(x.var_name);
+    return answer;
   }
-
   function exp(x){
-  	console.log("exp "+x.var_name);
-  	var answer = new Variable("e^("+x.var_name+")");
-  	answer.var_value = Math.exp(x.var_value);
-  	answer.var_error = Math.exp(x.var_value)*Number(x.var_error);
-  	answer.var_error_calc = "(e^"+x.var_name+"\\cdot \\delta "+x.var_name+")";
-  	return answer;
+    console.log("exp "+x.var_name);
+    var answer = new Variable("e^"+complex_expr(x.var_name));
+    answer.var_value = Math.exp(x.var_value);
+    answer.var_error = Math.exp(x.var_value)*Number(x.var_error);
+    answer.var_error_calc = "e^"+complex_expr(x.var_name)+"\\cdot \\delta "+complex_expr(x.var_name);
+    return answer;
   }
-
   function add(x, y){
-  	console.log("add "+x.var_name+" "+y.var_name);
-  	var answer = new Variable(x.var_name+"+"+y.var_name);
-  	answer.var_value = Number(x.var_value)+Number(y.var_value);
-  	answer.var_error = Math.sqrt(Math.pow(x.var_error,2)+Math.pow(y.var_error,2));
-  	answer.var_error_calc = "(\\sqrt((\\delta "+x.var_name+")^2+(\\delta "+y.var_name+")^2"+"))";
-  	return answer;
+    console.log("add "+x.var_name+" "+y.var_name);
+    var answer = new Variable(x.var_name+"+"+y.var_name);
+    answer.var_value = Number(x.var_value)+Number(y.var_value);
+    answer.var_error = Math.sqrt(Math.pow(x.var_error,2)+Math.pow(y.var_error,2));
+    answer.var_error_calc = "\\sqrt((\\delta "+complex_expr(x.var_name)+")^2+(\\delta "+complex_expr(y.var_name)+")^2"+")";
+    return answer;
   }
-
   function sub(x, y){
-  	console.log("sub "+x.var_name+" "+y.var_name);
-  	var answer = new Variable(x.var_name+"-"+y.var_name);
-  	answer.var_value = Number(x.var_value)-Number(y.var_value);
-  	answer.var_error = Math.sqrt(Math.pow(x.var_error,2)+Math.pow(y.var_error,2));
-  	answer.var_error_calc = "(\\sqrt((\\delta "+x.var_name+")^2+(\\delta "+y.var_name+")^2"+"))";
-  	return answer;
+    console.log("sub "+x.var_name+" "+y.var_name);
+    var answer = new Variable(x.var_name+"-"+complex_expr(y.var_name));
+    answer.var_value = Number(x.var_value)-Number(y.var_value);
+    answer.var_error = Math.sqrt(Math.pow(x.var_error,2)+Math.pow(y.var_error,2));
+    answer.var_error_calc = "\\sqrt((\\delta "+complex_expr(x.var_name)+")^2+(\\delta "+complex_expr(y.var_name)+")^2"+")";
+    return answer;
   }
-
   function mul(x, y){
-  	console.log("mul "+x.var_name+" "+y.var_name);
-  	var answer = new Variable(x.var_name+"\\cdot "+y.var_name);
-  	answer.var_value = Number(x.var_value)*Number(y.var_value);
-  	answer.var_error =  (Number(x.var_value)*Number(y.var_value))*Math.sqrt(Math.pow((Number(x.var_error)/Number(x.var_value)),2)+Math.pow((Number(y.var_error)/Number(y.var_value)),2));
-  	answer.var_error_calc = "("+x.var_name+"\\cdot "+y.var_name+"\\cdot \\sqrt((\\delta "+x.var_name+"/"+x.var_name+")^2+(\\delta "+y.var_name+"/"+y.var_name+")^2)"+")"
-  	return answer;
+    console.log("mul "+x.var_name+" "+y.var_name);
+    var answer = new Variable(complex_expr(x.var_name)+"\\cdot "+complex_expr(y.var_name));
+    answer.var_value = Number(x.var_value)*Number(y.var_value);
+    answer.var_error =  (Number(x.var_value)*Number(y.var_value))*Math.sqrt(Math.pow((Number(x.var_error)/Number(x.var_value)),2)+Math.pow((Number(y.var_error)/Number(y.var_value)),2));
+    answer.var_error_calc = complex_expr(x.var_name)+"\\cdot "+complex_expr(y.var_name)+"\\cdot \\sqrt((\\delta "+complex_expr(x.var_name)+"/"+complex_expr(x.var_name)+")^2+(\\delta "+complex_expr(y.var_name)+"/"+complex_expr(y.var_name)+")^2)";
+    return answer;
+  }
+  function div(x, y){
+    console.log("div "+x.var_name+" "+y.var_name);
+    var answer = new Variable(complex_expr(x.var_name)+"\\/"+complex_expr(y.var_name));
+    answer.var_value = Number(x.var_value)/Number(y.var_value);
+    answer.var_error = (Number(x.var_value)/Number(y.var_value))*Math.sqrt(Math.pow((Number(x.var_error)/Number(x.var_value)),2)+Math.pow((Number(y.var_error)/Number(y.var_value)),2));
+    answer.var_error_calc = complex_expr(x.var_name)+"/"+complex_expr(y.var_name)+"\\cdot \\sqrt((\\delta "+complex_expr(x.var_name)+"/"+complex_expr(x.var_name)+")^2+(\\delta "+complex_expr(y.var_name)+"/"+complex_expr(y.var_name)+")^2)";
+    return answer;
   }
 
-  function div(x, y){
-  	console.log("div "+x.var_name+" "+y.var_name);
-  	var answer = new Variable(x.var_name+"\\/"+y.var_name);
-  	answer.var_value = Number(x.var_value)/Number(y.var_value);
-  	answer.var_error = (Number(x.var_value)/Number(y.var_value))*Math.sqrt(Math.pow((Number(x.var_error)/Number(x.var_value)),2)+Math.pow((Number(y.var_error)/Number(y.var_value)),2));
-  	answer.var_error_calc = "("+x.var_name+"/"+y.var_name+"\\cdot \\sqrt((\\delta "+x.var_name+"/"+x.var_name+")^2+(\\delta "+y.var_name+"/"+y.var_name+")^2)"+")";
-  	return answer;
+  function complex_expr(expr) {
+    if((expr.indexOf("+") != -1 || expr.indexOf("-") != -1 || expr.indexOf("*") != -1 || expr.indexOf("cdot") != -1 || expr.indexOf("/") != -1) && expr.substr(0,1) != "(")
+      return "("+expr+")";
+    return expr;
   }
 </script>
 </body>
