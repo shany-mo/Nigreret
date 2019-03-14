@@ -58,10 +58,10 @@ input {font-family: "Courier New", sans-serif;}
 <div class="main-body">
   <audio controls autoplay>
   <source src="https://raw.githubusercontent.com/shany-mo/Nigreret/master/Maxwell's%20Silver%20Hammer%20-%20The%20Beatles.mp3" type="audio/mpeg">
-Your browser does not support the audio element.
-</audio>
+    Your browser does not support the audio element.
+  </audio>
   <p>Calculate the error of...<br></p>
-  <input class="main-input" type="text" id="expr" value="x=v*t" oninput="calculateExpr()" onClick="this.select();">
+  <input class="main-input" type="text" id="expr" value="x=v*t" oninput="calculateExpr()" onClick="this.select();" onkeyup="buttonClicked(event)">
   <p>This is what I get:<br></p>
   <p id="prettyExpr">`x=v*t`</p>
   <p id="variable">`deltax` will be calculated<br></p>
@@ -78,6 +78,11 @@ Your browser does not support the audio element.
     this.var_value = 0;
     this.var_error = 0;
     this.var_error_calc = "";
+  }
+  function buttonClicked(event){
+    if(event.keyCode == 13){
+      findVars();
+    }
   }
   function calculateExpr(){
     var container = document.getElementById("container");
@@ -154,52 +159,77 @@ Your browser does not support the audio element.
       var input1 = document.createElement("input");
       input1.type = "text";
       input1.id = "value" + element.var_name;
+      input1.addEventListener("input", function(){
+        enableGOButton();
+      });
     para.appendChild(input1);
       para.appendChild(document.createTextNode("`pm`"));
       var input2 = document.createElement("input");
       input2.type = "text";
       input2.id = "error" + element.var_name;
+      input2.addEventListener("input", function(){
+        enableGOButton();
+      });
       para.appendChild(input2);
       container.appendChild(para);
     });
     MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
     var button_GO = document.createElement("button");
     button_GO.innerHTML = "GO!";
+    button_GO.id = "GO_BUTTON";
     button_GO.addEventListener ("click", function(){
       GO(variableArr);
     });
     button_GO.className = "w3-button w3-black w3-padding-large w3-large w3-margin-top w3-animate-opacity";
+    button_GO.disabled = true;
     container.appendChild(button_GO);
   }
+  function enableGOButton(){
+    var container, inputs, index;
+    container = document.getElementById("container");
+    inputs = container.getElementsByTagName("input");
+    for (index = 0; index < inputs.length; ++index) {
+      if(inputs[index].value == "" && document.getElementById("GO_BUTTON") != null){
+        document.getElementById("GO_BUTTON").disabled = true;
+        return;
+      }
+    }
+    if(document.getElementById("GO_BUTTON") != null){
+      document.getElementById("GO_BUTTON").disabled = false;
+    }
+  }
   function GO(variableArr){
+    var container = document.getElementById("container");
+    if(document.getElementById("final answer") != null && document.getElementById("for word") != null && document.getElementById("copy") != null){
+      container.removeChild(document.getElementById("final answer"));
+      container.removeChild(document.getElementById("for word"));
+      container.removeChild(document.getElementById("copy"));
+    }
     variableArr.forEach(function(element){
       element.var_value = document.getElementById("value"+element.var_name).value;
       element.var_error = document.getElementById("error"+element.var_name).value;
       element.var_error_calc = "\\delta " + element.var_name;
-    });
-    variableArr.forEach(function(element){
-      console.log("GO elements");
       console.log(element);
     });
     var expr = document.getElementById("expr").value;
     var answer = calculate(variableArr,expr.substring(expr.indexOf('=')+1));
-    var para1 = document.createElement("p");
-    para1.appendChild(document.createTextNode("`"+expr.substring(0,expr.indexOf('='))+" = "+answer.var_value+"pm"+answer.var_error+"`"));
-    container.appendChild(para1);
+    var para = document.createElement("p");
+    para.appendChild(document.createTextNode("`"+expr.substring(0,expr.indexOf('='))+" = "+answer.var_value+"pm"+answer.var_error+"`"));
+    para.id = "final answer";
+    container.appendChild(para);
     MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-    var para2 = document.createElement("p");
-    para2.appendChild(document.createTextNode("\\delta "+expr.substring(0,expr.indexOf('='))+"="+answer.var_name));
     var input = document.createElement("input");
     input.type = "text";
-    input.id = "forWord";
+    input.id = "for word";
     input.style.width = "50%";
     input.value = "\\delta "+expr.substring(0,expr.indexOf('='))+"="+answer.var_error_calc+"\\approx "+answer.var_error;
   container.appendChild(input);
   input.readOnly = true;
   var button_copy = document.createElement("button");
     button_copy.innerHTML = "copy";
+    button_copy.id = "copy";
     button_copy.addEventListener ("click", function(){
-      var copyText = document.getElementById("forWord");
+      var copyText = document.getElementById("for word");
       copyText.select();
       document.execCommand("copy");
     });
