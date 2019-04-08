@@ -244,8 +244,15 @@ input {font-family: "Courier New", sans-serif;}
     for(let i=0; i<expr.length; i++){
       char = expr.substr(i,1);
       if(char == '('){
-        while(i<expr.length && expr.substr(i,1) != ')')
+        let count_left_par = 1;
+        let count_right_par = 0;
+        while(i<expr.length && count_left_par>count_right_par){
           i++;
+          if(expr.substr(i,1) == ')')
+            count_right_par++;
+          else if(expr.substr(i,1) == '(')
+            count_left_par++;
+        }
         continue;
       }
       if(char == '*' || char == '/' || char == '+' || char == '-'){
