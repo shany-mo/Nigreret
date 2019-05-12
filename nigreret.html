@@ -213,21 +213,25 @@ input {font-family: "Courier New", sans-serif;}
     MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
   }
   function printAns(answer){
+    answer_new = new Variable(greek_letters(answer.var_name));
+    answer_new.var_error_calc = greek_letters(answer.var_error_calc);
+    answer_new.var_error = answer.var_error;
+    answer_new.value = answer.value;
     var container = document.getElementById("container");
     var p = document.createElement("p");
-    p.innerHTML = "`delta"+complex_expr(answer.var_name)+":` ";
+    p.innerHTML = "`delta"+complex_expr(answer_new.var_name)+":` ";
     var input = document.createElement("input");
     input.type = "text";
-    input.id = "delta "+answer.var_name;
+    input.id = "delta "+answer_new.var_name;
     input.style.width = "50vw";
-    input.value = "\\delta "+complex_expr(answer.var_name)+"="+answer.var_error_calc+"\\approx "+answer.var_error;
+    input.value = "\\delta "+complex_expr(answer_new.var_name)+"="+answer_new.var_error_calc+"\\approx "+answer_new.var_error;
     input.readOnly = true;
     p.appendChild(input);
     var copyButton = document.createElement("button");
     copyButton.innerHTML = "copy";
-    copyButton.id = "copy delta "+answer.var_name;
+    copyButton.id = "copy delta "+answer_new.var_name;
     copyButton.addEventListener ("click", function(){
-      var copyText = document.getElementById("delta "+answer.var_name);
+      var copyText = document.getElementById("delta "+answer_new.var_name);
       console.log(copyText);
       copyText.select();
       document.execCommand("copy");
@@ -361,8 +365,18 @@ input {font-family: "Courier New", sans-serif;}
     else if(expr.substr(0,1) == '('){
       if(expr.substr(expr.length-1,1) == ')')
         answer = calculate(variableArr,expr.substring(1,expr.length-1));
-      else
-        answer = calculate(variableArr,expr.substring(1));
+      else{
+        if(expr.indexOf('^') != -1){
+          if(isNaN(expr.substring(expr.indexOf('^')+1))==false){
+            answer = calculate(variableArr,expr.substring(0,expr.indexOf('^')));
+            answer = power(answer,expr.substring(expr.indexOf('^')+1));
+          }
+          else{
+            alert("I'm sorry, I don't understand this expression: "+expr);
+            return null;
+          }
+        }
+      }
     }
     else if(expr.substr(0,3) == "cos"){
       answer = calculate(variableArr,expr.substring(3));
@@ -544,6 +558,33 @@ input {font-family: "Courier New", sans-serif;}
     answer.var_error_calc = complex_expr(x.var_name)+"/"+complex_expr(y.var_name)+"\\cdot \\sqrt((\\delta "+complex_expr(x.var_name)+"/"+complex_expr(x.var_name)+")^2+(\\delta "+complex_expr(y.var_name)+"/"+complex_expr(y.var_name)+")^2)";
     printAns(answer);
     return answer;
+  }
+
+  function greek_letters(expr){
+    expr = expr.replace(/alpha/g,"\\alpha ");
+    expr = expr.replace(/beta/g,"\\beta ");
+    expr = expr.replace(/gamma/g,"\\gamma ");
+    //expr = expr.replace(/delta/g,"\\delta ");
+    expr = expr.replace(/epsilon/g,"\\epsilon ");
+    expr = expr.replace(/zeta/g,"\\zeta ");
+    expr = expr.replace(/eta/g,"\\eta ");
+    expr = expr.replace(/theta/g,"\\theta ");
+    expr = expr.replace(/iota/g,"\\iota ");
+    expr = expr.replace(/kappa/g,"\\kappa ");
+    expr = expr.replace(/lambda/g,"\\lambda ");
+    expr = expr.replace(/mu/g,"\\mu ");
+    expr = expr.replace(/nu/g,"\\nu ");
+    expr = expr.replace(/xi/g,"\\xi ");
+    expr = expr.replace(/omicron/g,"\\omicron ");
+    //expr = expr.replace(/pi/g,"\\pi ");
+    expr = expr.replace(/rho/g,"\\rho ");
+    expr = expr.replace(/sigma/g,"\\sigma ");
+    expr = expr.replace(/upsilon/g,"\\upsilon ");
+    expr = expr.replace(/phi/g,"\\phi ");
+    expr = expr.replace(/chi/g,"\\chi ");
+    expr = expr.replace(/psi/g,"\\psi ");
+    expr = expr.replace(/omega/g,"\\omega ");
+    return expr;
   }
 
 </script>
