@@ -213,25 +213,21 @@ input {font-family: "Courier New", sans-serif;}
     MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
   }
   function printAns(answer){
-    answer_new = new Variable(greek_letters(answer.var_name));
-    answer_new.var_error_calc = greek_letters(answer.var_error_calc);
-    answer_new.var_error = answer.var_error;
-    answer_new.value = answer.value;
     var container = document.getElementById("container");
     var p = document.createElement("p");
-    p.innerHTML = "`delta"+complex_expr(answer_new.var_name)+":` ";
+    p.innerHTML = "`delta"+complex_expr(greek_letters(answer.var_name))+":` ";
     var input = document.createElement("input");
     input.type = "text";
-    input.id = "delta "+answer_new.var_name;
+    input.id = "delta "+answer.var_name;
     input.style.width = "50vw";
-    input.value = "\\delta "+complex_expr(answer_new.var_name)+"="+answer_new.var_error_calc+"\\approx "+answer_new.var_error;
+    input.value = "\\delta "+complex_expr(greek_letters(answer.var_name))+"="+greek_letters(answer.var_error_calc)+"\\approx "+answer.var_error;
     input.readOnly = true;
     p.appendChild(input);
     var copyButton = document.createElement("button");
     copyButton.innerHTML = "copy";
-    copyButton.id = "copy delta "+answer_new.var_name;
+    copyButton.id = "copy delta "+answer.var_name;
     copyButton.addEventListener ("click", function(){
-      var copyText = document.getElementById("delta "+answer_new.var_name);
+      var copyText = document.getElementById("delta "+answer.var_name);
       console.log(copyText);
       copyText.select();
       document.execCommand("copy");
@@ -584,6 +580,30 @@ input {font-family: "Courier New", sans-serif;}
     expr = expr.replace(/chi/g,"\\chi ");
     expr = expr.replace(/psi/g,"\\psi ");
     expr = expr.replace(/omega/g,"\\omega ");
+
+    expr = expr.replace(/Alpha/g,"\\Alpha ");
+    expr = expr.replace(/Beta/g,"\\Beta ");
+    expr = expr.replace(/Gamma/g,"\\Gamma ");
+    expr = expr.replace(/Delta/g,"\\Delta ");
+    expr = expr.replace(/Epsilon/g,"\\Epsilon ");
+    expr = expr.replace(/Zeta/g,"\\Zeta ");
+    expr = expr.replace(/Eta/g,"\\Eta ");
+    expr = expr.replace(/Theta/g,"\\Theta ");
+    expr = expr.replace(/Iota/g,"\\Iota ");
+    expr = expr.replace(/Kappa/g,"\\Kappa ");
+    expr = expr.replace(/Lambda/g,"\\Lambda ");
+    expr = expr.replace(/Mu/g,"\\Mu ");
+    expr = expr.replace(/Nu/g,"\\Nu ");
+    expr = expr.replace(/Xi/g,"\\Xi ");
+    expr = expr.replace(/Omicron/g,"\\Omicron ");
+    //expr = expr.replace(/Pi/g,"\\Pi ");
+    expr = expr.replace(/Rho/g,"\\Rho ");
+    expr = expr.replace(/Sigma/g,"\\Sigma ");
+    expr = expr.replace(/Upsilon/g,"\\Upsilon ");
+    expr = expr.replace(/Phi/g,"\\Phi ");
+    expr = expr.replace(/Chi/g,"\\Chi ");
+    expr = expr.replace(/Psi/g,"\\Psi ");
+    expr = expr.replace(/Omega/g,"\\Omega ");
     return expr;
   }
 
