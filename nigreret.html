@@ -196,8 +196,8 @@ input {font-family: "Courier New", sans-serif;}
       container.removeChild(document.getElementById("copy"));
     }
     variableArr.forEach(function(element){
-      element.var_value = document.getElementById("value"+element.var_name).value;
-      element.var_error = document.getElementById("error"+element.var_name).value;
+      element.var_value = eval(document.getElementById("value"+element.var_name).value.replace(/\^/g,"**"));
+      element.var_error = eval(document.getElementById("error"+element.var_name).value.replace(/\^/g,"**"));
       element.var_error_calc = "\\delta " + element.var_name;
       console.log(element);
     });
