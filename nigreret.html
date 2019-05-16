@@ -204,7 +204,7 @@ input {font-family: "Courier New", sans-serif;}
     var expr = document.getElementById("expr").value;
     var answer = calculate(variableArr,expr.substring(expr.indexOf('=')+1));
     var para = document.createElement("p");
-    para.appendChild(document.createTextNode("`"+expr.substring(0,expr.indexOf('='))+" = "+answer.var_value+"pm"+answer.var_error+"`"));
+    para.appendChild(document.createTextNode("`"+expr.substring(0,expr.indexOf('='))+" = "+answer.var_value.toString().replace(/e/g,"\\times 10^")+"pm"+answer.var_error.toString().replace(/e/g,"\\times 10^")+"`"));
     para.id = "final answer";
     var header = document.createElement("h1");
     header.innerHTML = "Final Answer:";
@@ -220,7 +220,7 @@ input {font-family: "Courier New", sans-serif;}
     input.type = "text";
     input.id = "delta "+answer.var_name;
     input.style.width = "50vw";
-    input.value = "\\delta "+complex_expr(greek_letters(answer.var_name))+"="+greek_letters(answer.var_error_calc)+"\\approx "+answer.var_error;
+    input.value = "\\delta "+complex_expr(greek_letters(answer.var_name))+"="+greek_letters(answer.var_error_calc)+"\\approx "+answer.var_error.toString().replace(/e/g,"\\times 10^");
     input.readOnly = true;
     p.appendChild(input);
     var copyButton = document.createElement("button");
