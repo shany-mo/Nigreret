@@ -557,53 +557,11 @@ input {font-family: "Courier New", sans-serif;}
   }
 
   function greek_letters(expr){
-    expr = expr.replace(/alpha/g,"\\alpha ");
-    expr = expr.replace(/beta/g,"\\beta ");
-    expr = expr.replace(/gamma/g,"\\gamma ");
-    //expr = expr.replace(/delta/g,"\\delta ");
-    expr = expr.replace(/epsilon/g,"\\epsilon ");
-    expr = expr.replace(/zeta/g,"\\zeta ");
-    expr = expr.replace(/eta/g,"\\eta ");
-    expr = expr.replace(/theta/g,"\\theta ");
-    expr = expr.replace(/iota/g,"\\iota ");
-    expr = expr.replace(/kappa/g,"\\kappa ");
-    expr = expr.replace(/lambda/g,"\\lambda ");
-    expr = expr.replace(/mu/g,"\\mu ");
-    expr = expr.replace(/nu/g,"\\nu ");
-    expr = expr.replace(/xi/g,"\\xi ");
-    expr = expr.replace(/omicron/g,"\\omicron ");
-    //expr = expr.replace(/pi/g,"\\pi ");
-    expr = expr.replace(/rho/g,"\\rho ");
-    expr = expr.replace(/sigma/g,"\\sigma ");
-    expr = expr.replace(/upsilon/g,"\\upsilon ");
-    expr = expr.replace(/phi/g,"\\phi ");
-    expr = expr.replace(/chi/g,"\\chi ");
-    expr = expr.replace(/psi/g,"\\psi ");
-    expr = expr.replace(/omega/g,"\\omega ");
-
-    expr = expr.replace(/Alpha/g,"\\Alpha ");
-    expr = expr.replace(/Beta/g,"\\Beta ");
-    expr = expr.replace(/Gamma/g,"\\Gamma ");
-    expr = expr.replace(/Delta/g,"\\Delta ");
-    expr = expr.replace(/Epsilon/g,"\\Epsilon ");
-    expr = expr.replace(/Zeta/g,"\\Zeta ");
-    expr = expr.replace(/Eta/g,"\\Eta ");
-    expr = expr.replace(/Theta/g,"\\Theta ");
-    expr = expr.replace(/Iota/g,"\\Iota ");
-    expr = expr.replace(/Kappa/g,"\\Kappa ");
-    expr = expr.replace(/Lambda/g,"\\Lambda ");
-    expr = expr.replace(/Mu/g,"\\Mu ");
-    expr = expr.replace(/Nu/g,"\\Nu ");
-    expr = expr.replace(/Xi/g,"\\Xi ");
-    expr = expr.replace(/Omicron/g,"\\Omicron ");
-    //expr = expr.replace(/Pi/g,"\\Pi ");
-    expr = expr.replace(/Rho/g,"\\Rho ");
-    expr = expr.replace(/Sigma/g,"\\Sigma ");
-    expr = expr.replace(/Upsilon/g,"\\Upsilon ");
-    expr = expr.replace(/Phi/g,"\\Phi ");
-    expr = expr.replace(/Chi/g,"\\Chi ");
-    expr = expr.replace(/Psi/g,"\\Psi ");
-    expr = expr.replace(/Omega/g,"\\Omega ");
+    var letters = ["alpha","beta","gamma","epsilon","zeta","eta","theta","iota","kappa","lambda","mu","nu","xi","omicron","rho","sigma","upsilon","phi","chi","psi","omega"];
+    for(var i=0; i<letters.length; i++){
+      expr = expr.replace(new RegExp(letters[i],"g"),"\\"+letters[i]+" ");
+      expr = expr.replace(new RegExp(letters[i].charAt(0).toUpperCase()+letters[i].slice(1),"g"),"\\"+letters[i].charAt(0).toUpperCase()+letters[i].slice(1)+" ");
+    }
     return expr;
   }
 
