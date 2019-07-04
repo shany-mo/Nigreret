@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+<head>
 <title>Nigreret</title>
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
 <link rel="shortcut icon" href="https://raw.githubusercontent.com/shany-mo/Nigreret/master/deltaF.ico"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=AM_CHTML"></script>
+<script src="https://kit.fontawesome.com/751a1879be.js"></script>
+</head>
 
 <style>
 h1 {font-family: "Montserrat", sans-serif;font-size: 9vmin;}
@@ -41,16 +45,49 @@ input {font-family: "Courier New", sans-serif;}
 .container-style{
   width: 100%;
 }
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 600px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  padding: 12px 16px;
+  z-index: 1;
+  font-size: 13px;
+  text-align:left;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
 </style>
+
+<body class="background-style">
+
 <div class="header">
   <h1>ERROR PROPAGATION</h1>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=AM_CHTML"></script>
-</header>
-
-<body class="background-style">
 <div class="main-body">
+  <div class="dropdown">
+  <span><i class="fas fa-info-circle"></i></span>
+  <div class="dropdown-content">
+    <p style="text-align:center;font-size: 15px"><b>Welcome to Nigreret!</b></p>
+    <p>Here are some tips for your work with the site:</p>
+    <p>&#8594 Write the equation for the variable you would like to calculate its error.</p>
+    <p>&#8594 Click "Done" button.</p>
+    <p>&#8594 For each variable, write the measured value and the error value. <i>(Instead of writing 0.00003 you can write 3*10^-5, instead of writing 3.1415 you can write pi.)</i></p>
+    <p>&#8594 Click "GO!" button.</p>
+    <p>&#8594 The final result and the results of intermediate calculations will appear. You can copy them to a Word document using the "copy" buttons that appear next to each line.</p>
+    <p>In the Word document you can convert the UNICODE into a professional equation by pressing the dedicated button.
+    <b><i>Tip:</b></i> If the equation is not properly converted, press the button again.</p>
+    <p><b>Nigreret supports the functions:</b> sin, cos, exp, ln, power, addition, subtraction, multiplication, division, the constants pi (&#960=3.1415…) and e (=2.7182…).</p>
+
+  </div>
+</div>
   <p>Calculate the error of...<br></p>
   <input class="main-input" type="text" id="expr" value="x=v*t" oninput="calculateExpr()" onClick="this.select();" onkeyup="buttonClicked(event)">
   <p>This is what I get:<br></p>
@@ -58,7 +95,6 @@ input {font-family: "Courier New", sans-serif;}
   <p id="variable">`deltax` will be calculated<br></p>
 
   <button class="w3-button w3-black w3-padding-large w3-large w3-margin-top w3-animate-opacity" onclick="findVars()">Done</button>
-
   <div id="container" class="container-style"></div>
   <div style="height: 30px"></div>
 </div>
@@ -196,8 +232,8 @@ input {font-family: "Courier New", sans-serif;}
       container.removeChild(document.getElementById("copy"));
     }
     variableArr.forEach(function(element){
-      element.var_value = eval(document.getElementById("value"+element.var_name).value.replace(/\^/g,"**"));
-      element.var_error = eval(document.getElementById("error"+element.var_name).value.replace(/\^/g,"**"));
+      element.var_value = eval(document.getElementById("value"+element.var_name).value.replace(/\^/g,"**").replace(/pi/g,"Math.PI").replace(/e/g,"Math.E"));
+      element.var_error = eval(document.getElementById("error"+element.var_name).value.replace(/\^/g,"**").replace(/pi/g,"Math.PI").replace(/e/g,"Math.E"));
       element.var_error_calc = "\\delta " + element.var_name;
       console.log(element);
     });
@@ -215,12 +251,12 @@ input {font-family: "Courier New", sans-serif;}
   function printAns(answer){
     var container = document.getElementById("container");
     var p = document.createElement("p");
-    p.innerHTML = "`delta"+complex_expr(greek_letters(answer.var_name))+":` ";
+    p.innerHTML = "`delta"+complex_expr(greek_letters(main_var_expr(answer.var_name)))+":` ";
     var input = document.createElement("input");
     input.type = "text";
     input.id = "delta "+answer.var_name;
     input.style.width = "50vw";
-    input.value = "\\delta "+complex_expr(greek_letters(answer.var_name))+"="+greek_letters(answer.var_error_calc)+"\\approx "+answer.var_error.toString().replace(/e/g,"\\times 10^");
+    input.value = "\\delta "+complex_expr(greek_letters(main_var_expr(answer.var_name)))+"="+greek_letters(answer.var_error_calc)+"\\approx "+answer.var_error.toString().replace(/e/g,"\\times 10^");
     input.readOnly = true;
     p.appendChild(input);
     var copyButton = document.createElement("button");
@@ -563,6 +599,14 @@ input {font-family: "Courier New", sans-serif;}
       expr = expr.replace(new RegExp(letters[i].charAt(0).toUpperCase()+letters[i].slice(1),"g"),"\\"+letters[i].charAt(0).toUpperCase()+letters[i].slice(1)+" ");
     }
     return expr;
+  }
+
+  function main_var_expr(ans_expr){
+    var expr = document.getElementById("expr").value;
+    if(ans_expr.replace(/\\cdot /g,"*") == expr.substring(expr.indexOf('=')+1)){
+      return expr.substring(0,expr.indexOf('='));
+    }
+    return ans_expr;
   }
 
 </script>
