@@ -89,10 +89,10 @@ input {font-family: "Courier New", sans-serif;}
   </div>
 </div>
   <p>Calculate the error of...<br></p>
-  <input class="main-input" type="text" id="expr" value="x=v*t" oninput="calculateExpr()" onClick="this.select();" onkeyup="buttonClicked(event)">
+  <input class="main-input" type="text" id="expr" value="E=(h/(2pi))*omega" oninput="calculateExpr()" onClick="this.select();" onkeyup="buttonClicked(event)">
   <p>This is what I get:<br></p>
-  <p id="prettyExpr">`x=v*t`</p>
-  <p id="variable">`deltax` will be calculated<br></p>
+  <p id="prettyExpr">`E=(h/(2pi))*omega`</p>
+  <p id="variable">`deltaE` will be calculated<br></p>
 
   <button class="w3-button w3-black w3-padding-large w3-large w3-margin-top w3-animate-opacity" onclick="findVars()">Done</button>
   <div id="container" class="container-style"></div>
@@ -251,12 +251,12 @@ input {font-family: "Courier New", sans-serif;}
   function printAns(answer){
     var container = document.getElementById("container");
     var p = document.createElement("p");
-    p.innerHTML = "`delta"+complex_expr(greek_letters(main_var_expr(answer.var_name)))+":` ";
+    p.innerHTML = "`delta"+complex_expr(greek_letters(main_var_expr(answer)))+":` ";
     var input = document.createElement("input");
     input.type = "text";
     input.id = "delta "+answer.var_name;
     input.style.width = "50vw";
-    input.value = "\\delta "+complex_expr(greek_letters(main_var_expr(answer.var_name)))+"="+greek_letters(answer.var_error_calc)+"\\approx "+answer.var_error.toString().replace(/e/g,"\\times 10^");
+    input.value = "\\delta "+complex_expr(greek_letters(main_var_expr(answer)))+"="+greek_letters(answer.var_error_calc)+"\\approx "+answer.var_error.toString().replace(/e/g,"\\times 10^");
     input.readOnly = true;
     p.appendChild(input);
     var copyButton = document.createElement("button");
@@ -447,7 +447,13 @@ input {font-family: "Courier New", sans-serif;}
       if(isNaN(expr.substring(0,i))==false){
         console.log("Calculates "+expr.substring(i)+" times "+expr.substring(0,i));
         answer = calculate(variableArr,expr.substring(i));
-        answer = constant_mul(answer,expr.substring(0,i));
+        if(answer.var_name == "constant"){
+          answer.var_value = Number(answer.var_value) * Number(expr.substring(0,i));
+          answer.var_error = 0;
+        }
+        else{
+          answer = constant_mul(answer,expr.substring(0,i));
+        }
       }
       else{
         alert("I'm sorry, I don't understand this expression: "+expr);
@@ -456,7 +462,6 @@ input {font-family: "Courier New", sans-serif;}
     }
     else if(expr.substr(0,2) == "pi"){
       if(expr == "pi"){
-        console.log("The expression " + expr + " is pi");
         answer = new Variable("constant");
         answer.var_value = Math.PI;
         answer.var_error = 0;
@@ -601,12 +606,15 @@ input {font-family: "Courier New", sans-serif;}
     return expr;
   }
 
-  function main_var_expr(ans_expr){
+  function main_var_expr(answer){
     var expr = document.getElementById("expr").value;
-    if(ans_expr.replace(/\\cdot /g,"*") == expr.substring(expr.indexOf('=')+1)){
+    if(answer.var_name == "constant"){
+      return answer.var_value;
+    }
+    if(answer.var_name.replace(/\\cdot /g,"*") == expr.substring(expr.indexOf('=')+1)){
       return expr.substring(0,expr.indexOf('='));
     }
-    return ans_expr;
+    return answer.var_name;
   }
 
 </script>
